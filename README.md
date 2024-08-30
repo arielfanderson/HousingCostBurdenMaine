@@ -2,8 +2,8 @@
 Author: Ariel Anderson
 
 ## Tools: 
-R Studio
-GeoDa
+*R Studio
+*GeoDa
 
 ## Introduction 
 
@@ -26,7 +26,6 @@ Results
 
 Preliminary maps were made using R studio with 6 natural jenks to give a visual impression of distribution of housing cost burden, rates of poverty, and rates of disability in the state of Maine. This is depicted in figure 1. 
 
-Figure 1.
 ![alt-text](https://github.com/arielfanderson/HousingCostBurdenMaine/blob/main/figure1.jpg)
 
 Linear regression of housing burden as the response variable to explanatory variable rate of poverty had a y-intercept estimated at 155.69, and poverty coefficient of 0.32, resulting in a linear equation of: Housing Burden=155.69+ 0.32(Rate of Poverty).
@@ -37,48 +36,40 @@ Linear regression of housing burden as the response variable to explanatory vari
  
 The residual standard error of 145.6 implies an average -error of 145.6. The R Squared value of 0.3828 indicates 38.28% of the variance in data can be attributed to the linear regression model, with an adjusted R square value of 38.12 or 38.12%. The p-value of 2e-16 indicates statistical significance. 
 
-Figure 2. 
 ![alt-text](https://github.com/arielfanderson/HousingCostBurdenMaine/blob/main/figure2.jpg)
 
 The summary of the OLS model indicates an intercept of 90.04, and the coefficient of poverty as 0.21 and the coefficient of disability as 0.27, resulting in a positive correlation equation of: Housing Burden=90.04+0.21(Poverty)+ 0.27(Disability) 
 
 The equation implies that housing burden increases as rates of poverty and disability increase. The p value for y intercept was 5.06e08, the p value for the poverty coefficient was 1.49e-15, and the p value for the disability coefficient was 4.24e-12, implying statistical significance. The residual standard error of 134.6 implies that the OLS regression model predicts violent crime with an average error of 134.6. The R Squared value of 0.4741 indicates 47.41% of the variance in data can be attributed to the OLS linear regression model, with an adjusted R square value of 0.4715 or 47.15%. The p-value of 2.2e-16 indicates statistical significance.
 
-Figure 3. 
 ![alt-text](https://github.com/arielfanderson/HousingCostBurdenMaine/blob/main/figure3.jpg)
 
 In the residuals versus fitted graph there is slight deviance from the center, which indicates change in variance. There may be a better fit model for this data.  The QQ model shows a long right tail, which generates high kurtosis. The p-value of 2.2e-16 in the JB test supports this interpretation, as it indicates the null hypothesis of normality should not be rejected. The scale location graph indicates that variance in the data is not constant, suggesting non linearity in the data.  The residuals versus leverage graph does not show any points outside of Cook's distance. However, outliers can be noted which may have influence on variance in the data. This may indicate a there is a better fit model for the data. The Breusch-Pagan test p-value of 0.036 indicates that the null hypothesis of homoskedasticity is rejected and heteroskedasticity is not assumed. 
-
-Figure 4. 
+ 
 ![alt-text](https://github.com/arielfanderson/HousingCostBurdenMaine/blob/main/figure4.jpg) 
 
 Figure 4 depicts maps the OLS residuals and maps the residuals with respect to standard deviation. Visually, autocorrelation may be suggested if there are clusters of positive and negative standard deviations and regions. The maps shows some clusters of positive and negative, with more frequent negative clusters.
-
-Figure 5. 
+ 
 ![alt-text](https://github.com/arielfanderson/HousingCostBurdenMaine/blob/main/figure5.jpg)
 
 Moran’s I analysis was run in both GeoDa and R Studio. In R Studio Global Moran’s I was observed at 0.36 with a p-value of <2.2e-16 and in GeoDa Local Univariate Moran’s I was observed at 0.406 with a p-value of 0.01. The Monte Carlo test of Moran’s I was run in R Studio indicating a value of 0.36 and p-value of 0.01. This suggests the null hypothesis can be rejected. The alternative hypothesis suggests positive autocorrelation. The Moran's I value of 0.36 is between -1 and +1, which suggests significance as well as positive auto correlation.
 
-Figure 6. 
 ![alt-text](https://github.com/arielfanderson/HousingCostBurdenMaine/blob/main/figure6.jpg)
 
 Figure 6 shows Local Univariate Moran I Cluster and Significance Maps made on GeoDa. The Local Univariate Moran I Cluster Map with respect to residuals corresponds with the significance map. Significant Local Moran I values are highlighted in green on the significance map. The cluster map shows 51 High-High and 81 Low-Low areas, with 12 Low-High, and 12 High-Low outliers, consistent with a positive spatial autocorrelation.
 
 Because spatial autocorrelation may be present Lagrange Multiplier Statistics was run in R Studio to determine if a Spatial Lag or Spatial Error model would be a better fit for the data. 
-
-Figure 7. 
+ 
 ![alt-text](https://github.com/arielfanderson/HousingCostBurdenMaine/blob/main/figure7.jpg)
 
 Figure 7 indicates the results of Lagrange Multiplier Statistics diagnostics. Both the Robust LM Error and Robust LM Lag test were significant. Therefore, a Spatial Lag and Spatial Error Model were run.
-
-Figure 8. 
+ 
 ![alt-text](https://github.com/arielfanderson/HousingCostBurdenMaine/blob/main/figure8.jpg)
 
 Figure 8 depicts the Spatial Lag and Spatial Error Residuals, showing a fairly even distribution of positive and negative regions. The summary of the Spatial Lag model indicates an intercept of -38.50, and the coefficient of poverty as 0.20 and the coefficient of disability as 0.27, resulting in a positive correlation. For the Spatial Lag test the p value for y intercept was 0.06 the p value for the poverty coefficient was <2.2e-16, and the p value for the disability coefficient was 9.1e-15. The coefficients were statistically significant, but the y intercept was not. The p value for the model was 5.01e-14.
 
 The summary of the Spatial Error model indicates an intercept of 65.11, and the coefficient of poverty as 0.24 and the coefficient of disability as 0.0003, resulting in a positive correlation. For the Spatial Lag test the p value for y intercept was 0.06 the p value for the poverty coefficient was <2.2e-16, and the p value for the disability coefficient was <2.26e-16.  The p value for the model was 4.45e-8. Because the y intercept and coefficients were statistically significant the Spatial Error model may be a better fit model. 
 
-Figure 9.
 ![alt-text](https://github.com/arielfanderson/HousingCostBurdenMaine/blob/main/figure9.jpg)
 
 Figure 9 shows the AIC, BIC, and Log Likelihood of the OLS, Spatial Lag, and Spatial Error Model. A higher Log Likelihood and lower AIC and BIC, value indicates a better fit model. Based on the AIC, BIC, and Log Likelihood values, the Spatial Error model is likely the best fit model. This is consistent with the statistical significance of the Spatial Error model. 
