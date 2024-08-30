@@ -1,0 +1,152 @@
+---
+title: "Exploring the relationship between housing cost burden and measures of social vulnerability"
+author: "Ariel Anderson"
+
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_knit$set(root.dir = 'C:/Users/ariel/OneDrive/Desktop/Data/Cali')
+knitr::include_graphics
+```
+
+```{r include=FALSE}
+library(sf)
+library(spdep)
+library(spatialreg)
+library(ggplot2)
+library(classInt)
+library(broom)
+library(lmtest) 
+library(tseries)
+library(dplyr)
+library(patchwork)
+```
+
+```{r include=FALSE}
+
+mainesv=st_read(dsn ="SVI2020_MAINE_tract.shp") 
+summary(mainesv)
+mainest=st_transform(mainesv, 32619)
+
+```
+
+
+
+```{r}
+brks=classIntervals(mainesv$E_POV150, n=5, style="jenks", intervalClosure = 'left')
+mainesv$pov <- cut(mainesv$E_POV150, brks$brks)
+
+ggplot()  +
+  geom_sf(data = mainesv, aes(fill = pov)) +
+  scale_fill_brewer(palette = "YlOrRd") +
+  coord_sf() +labs(title ="Number of Households Living at 150% Poverty or Less", size=1, fill="Number of Households")
+
+```
+```{r}
+brks=classIntervals(mainesv$E_DISABL, n=5, style="jenks", intervalClosure = 'left')
+mainesv$nohs <- cut(mainesv$E_DISABL, brks$brks)
+
+ggplot()  +
+  geom_sf(data = mainesv, aes(fill = nohs)) +
+  scale_fill_brewer(palette = "RdPu") +
+  coord_sf() +labs(title ="Number of Individuals with Documented Disability", size=1, fill="Number of Households")
+
+```
+```{r}
+brks=classIntervals(mainesv$E_HBURD, n=5, style="jenks", intervalClosure = 'left')
+mainesv$hburd <- cut(mainesv$E_HBURD, brks$brks)
+
+ggplot()  +
+  geom_sf(data = mainesv, aes(fill = hburd)) +
+  scale_fill_brewer(palette = "YlGnBu") +
+  coord_sf() +labs(title ="Number of Households With Housing Cost Burden", size=1, fill="Number of Households")
+
+```
+
+
+```{r}
+ggplot(data = mainesv, aes(x = E_POV150, y=E_HBURD)) + geom_point(col='red')+geom_smooth(method=lm, se=FALSE)+ labs(title ="Housing Cost Burden Correlated with Number of Individuals in Poverty", x = "Poverty (number of households)", y = "Rate of Housing Burden")+ theme(plot.title = element_text(size=9),  axis.text.x=element_text(angle=90, hjust=1, size = 7), axis.title.x =element_text(size =9), axis.text.y=element_text(hjust=1, size = 7), axis.title.y =element_text(size =9))
+lmpov <- lm(E_HBURD  ~ E_POV150, data=mainesv)
+summary(lmpov)
+```
+
+
+```{r}
+ggplot(data = mainesv, aes(x = E_DISABL, y=E_HBURD)) + geom_point(col='red')+geom_smooth(method=lm, se=FALSE)+ labs(title ="Housing Cost Burden Correlated with Disability Rate", x = "Rate of Individuals with Disability", y = "Rate of Housing Burden")+ theme(plot.title = element_text(size=9),  axis.text.x=element_text(angle=90, hjust=1, size = 7), axis.title.x =element_text(size =9), axis.text.y=element_text(hjust=1, size = 7), axis.title.y =element_text(size =9))
+lmnohs <- lm(E_HBURD  ~ E_DISABL, data=mainesv)
+summary(lmnohs)
+
+```
+```{r}
+ols <- lm(E_HBURD  ~ E_POV150+E_DISABL, data=mainesv)
+plot(ols)
+coef(ols)
+summary(ols)
+```
+
+
+
+```{r}
+bptest(ols)
+jarque.bera.test(ols$residuals)
+```
+
+
+
+```{r}
+
+nbscali=poly2nb(mainesv, queen = TRUE)
+W <- nb2listw(nbscali, style = "W", zero.policy=TRUE)
+
+lm.morantest(ols, W, zero.policy=TRUE)
+moran.test(ols$residuals, W, randomisation = FALSE, zero.policy=TRUE)
+moran.test(ols$residuals, W, randomisation = TRUE, zero.policy=TRUE)
+moran.mc(ols$residuals, W, 99, zero.policy=TRUE)
+
+
+```
+
+
+
+```{r}
+moran.test(ols$residuals, W, randomisation = FALSE, zero.policy = TRUE)
+
+```
+
+```{r}
+logLik(ols)
+BIC(ols)
+
+lmtests=lm.LMtests(ols, W, zero.policy = T, test='all')
+lstat=unlist(c(lmtests$LMerr[1],lmtests$LMlag[1], lmtests$RLMerr[1],lmtests$RLMlag[1], lmtests$SARMA[1]))
+pval=(c(lmtests$LMerr[3],lmtests$LMlag[3], lmtests$RLMerr[3],lmtests$RLMlag[3], lmtests$SARMA[3]))
+
+summary(lmtests)
+```
+
+```{r}
+serror<- errorsarlm(E_HBURD ~ E_POV150 + E_DISABL, data = mainesv, listw=W, zero.policy = T)
+summary(serror)
+```
+
+
+
+
+```{r}
+slag<- lagsarlm(E_HBURD ~ E_POV150 + E_DISABL, data = mainesv, listw=W, zero.policy = T)
+summary(slag)
+```
+
+```{r}
+p <- c(AIC(ols), AIC(slag), AIC(serror))
+q <- c(BIC(ols), BIC(slag), BIC(serror))
+r <- c(logLik(ols), logLik(slag), logLik(serror))
+
+labdata <- data.frame(p,q,r)
+names(labdata) <- c("AIC", "BIC", "Log Likelihood")
+rownames(labdata) <-c("OLS Model", "Spatial Lag Model", "Spatial Error Model")
+print(labdata)
+summary(labdata) 
+
+```
+
