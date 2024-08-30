@@ -2,8 +2,8 @@
 Author: Ariel Anderson
 
 ## Tools: 
-*R Studio
-*GeoDa
+* R Studio
+* GeoDa
 
 ## Introduction 
 
