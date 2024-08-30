@@ -1,23 +1,28 @@
-###Exploring the relationship between housing cost burden and measures of social vulnerability
+### Exploring the relationship between housing cost burden and measures of social vulnerability
 Author: Ariel Anderson
 
-Tools: 
+## Tools: 
 R Studio
 
-##Introduction 
+## Introduction 
 	This project examines the relationship between housing cost and two measures of social vulnerability from the Center for Disease Control Social Vulnerability Index (SVI). Measures of SVI are used to determine a population’s risk in the event of an emergency disaster. The purpose of this project is to explore potential variables that may contribute to housing cost burden by examining measures of social vulnerability in the state of Maine. Examining the relationship between housing cost burden and social vulnerability may help to guide better economic policy to help individuals secure affordable housing. Since the pandemic, Maine has seen a 39% increase in rental costs, severely impacting low-income individuals (Olsen, 2022).  
  
   Ordinary Least Squares will be used to determine the relationship between housing cost burden and two measures of social vulnerability, and to determine possible spatial autocorrelation using Moran’s I analysis. Housing cost burden is defined as households that make less than $70,000 a year, and spend at least 30% of household income on housing. The two covariates explored in this project, or explanatory variables, are number of households living up to 150% of the poverty line, and number of individuals living with a documented disability. Because higher SVI measures contribute to a population’s risk (CDC, 2022), it is hypothesized that housing burden increases with higher measures of social vulnerability and that positive spatial autocorrelation is present.  
 
 ##  Methods 
 
+Spatial data was obtained from the CDC Social Vulnerability database for Maine census tracts. The independent variable, or response variable, for each part of the analysis is number of households with housing cost burden. As a preliminary step, the explanatory and response variable will be mapped in R studio using six natural jenks to give a visual impression of the covariates and response variable. The two covariates explored in this project, or explanatory variables, are number of households living up to 150% of the poverty line, and number of individuals living with a documented disability. 
 
-	Spatial data was obtained from the CDC Social Vulnerability database for Maine census tracts. The independent variable, or response variable, for each part of the analysis is number of households with housing cost burden. As a preliminary step, the explanatory and response variable will be mapped in R studio using six natural jenks to give a visual impression of the covariates and response variable. The two covariates explored in this project, or explanatory variables, are number of households living up to 150% of the poverty line, and number of individuals living with a documented disability. 
 Linear regression will be calculated for each covariate individually. Then, Ordinary Least Squares (OLS) will examine the relationship between housing cost burden and the two covariates. Exploration of individual linear regression prior to implementation of OLS follows the methods outlined in Olakunde’s spatial analysis of HIV infection in at risk populations (Olakunde, et al., 2020). 
-This project uses a spatial regression model using R Studio similar to a study at Utah State University that examines park quality as a response variable to socioeconomic status covariates. Moran’s I analysis of the residuals will be computed based on queen’s case spatial weight matrix (Chen, et al. 2019). Additionally, the GeoDa workbook suggests that queen’s case weights have more neighbors than the rook’s case. Therefore, a rook’s case weight matrix will have neighboring observations with more influence. Based on previous studies (Chen, et al. 2019), and the GeoDa workbook, a queen’s case weight matrix was determined. This analysis will be conducted using both GeoDa and R Studio. 
+
+This project uses a spatial regression model using R Studio similar to a study at Utah State University that examines park quality as a response variable to socioeconomic status covariates. Moran’s I analysis of the residuals will be computed based on queen’s case spatial weight matrix (Chen, et al. 2019). Additionally, the GeoDa workbook suggests that queen’s case weights have more neighbors than the rook’s case. Therefore, a rook’s case weight matrix will have neighboring observations with more influence. Based on previous studies (Chen, et al. 2019), and the GeoDa workbook, a queen’s case weight matrix was determined. This analysis will be conducted using both GeoDa and R Studio.
+
 If spatial autocorrelation is found for housing cost burden, then the OLS model may not be suitable. Lagrange Multiplier Statistics will be used to determine if a Spatial Lag or Spatial Error model will be necessary (Chen, et al. 2019). The AIC, BIC, and Loglikelihood values will be used to compare models. In general, a lower AIC and higher Loglikelihood is associated with a better fit model (Plant, 2019, p. 260). 
 Results
-	Preliminary maps were made using R studio with 6 natural jenks to give a visual impression of distribution of housing cost burden, rates of poverty, and rates of disability in the state of Maine. This is depicted in figure 1. 
+
+## Results
+
+Preliminary maps were made using R studio with 6 natural jenks to give a visual impression of distribution of housing cost burden, rates of poverty, and rates of disability in the state of Maine. This is depicted in figure 1. 
 Figure 1.
  	 
  
